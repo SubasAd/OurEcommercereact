@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Input from "./SmallerComponents/input";
 import { register } from "../Services/user";
+import { Toast, ToastContainer } from "react-bootstrap";
 class RegisterForm extends Component {
   state = {
     user: {
@@ -17,12 +18,14 @@ class RegisterForm extends Component {
     this.setState({ user });
   };
   handleSubmit = async (e) => {
+    this.setState({Submitted:true})
     e.preventDefault();
     const { user } = this.state;
     try {
       const { data } = await register(user);
       localStorage.setItem("jwt", data.jwt);
-      this.setState({ error: "" });
+      this.setState({ error: "",isLogin:true });
+      window.location="/";
     } catch ({response}) {
         
       if (response.status === 400) {
@@ -58,6 +61,26 @@ class RegisterForm extends Component {
             type="text"
             value={user.phone}
           ></Input>
+          {this.state.Submitted ? (
+            <ToastContainer className="p-3" position="top-center">
+               {this.state.isLogin
+                   ?
+              <Toast bg="success">
+                <Toast.Body className=' dark text-white'>
+                Registered and Logged in successfully
+                </Toast.Body>
+              </Toast>
+              :
+              <Toast className="d-inline-block m-1" bg="danger" animation= {true} delay={5000} autohide>
+                <Toast.Body className=' dark text-white'>
+                 {this.state.error}
+                </Toast.Body>
+              </Toast>
+  }
+            </ToastContainer>
+          ) : (
+            <></>
+          )}
           <button type="submit" className="btn btn-primary  p-2 m-2">
             Submit
           </button>

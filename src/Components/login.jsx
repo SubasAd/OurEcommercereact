@@ -1,16 +1,22 @@
 import React, { Component } from "react";
 import Input from "./SmallerComponents/input";
 import { login } from "../Services/login";
+import Toastmsg from "./SmallerComponents/Toastmsg";
 
 class Login extends Component {
+  Toast = null;
+
   state = {
     account: {
       username: "",
       password: "",
     },
     error: "",
+    isLogin: false,
+    Submitted: false,
   };
   handleChange = ({ currentTarget: input }) => {
+    this.setState({ Submitted: false });
     const account = { ...this.state.account };
     account[input.name] = input.value;
 
@@ -24,12 +30,15 @@ class Login extends Component {
       localStorage.setItem("jwt", data.jwt);
       this.setState({ error: "" });
       window.location = "/";
+
+      this.setState({ isLogin: true });
     } catch ({ response }) {
-      console.log(response);
       if (response.status === 400) {
         this.setState({ error: response.data });
+
         localStorage.clear();
       }
+      this.setState({ isLogin: false });
     }
   };
 
@@ -54,17 +63,33 @@ class Login extends Component {
             onChange={this.handleChange}
           />
 
-          <button type="submit" className="btn btn-primary  p-2 m-2">
+          <button
+            onClick={() => this.setState({ Submitted: true })}
+            type="submit"
+            className="btn btn-primary  p-2 m-2"
+          >
             Submit
           </button>
-        </form>
-        <div>
-          {this.state.error === "" ? (
-            <div></div>
+          {this.state.Submitted ? (
+            this.state.isLogin ? (
+              <Toastmsg
+                show={this.state.Submitted}
+                bg="success"
+                msg="Successfully logged in"
+                showfromparent={this.state.Submitted}
+              />
+            ) : (
+              <Toastmsg
+                show={this.state.Submitted}
+                setShow={(val) => this.setState({ Submitted: val })}
+                bg="danger"
+                msg={this.state.error}
+              />
+            )
           ) : (
-            <div>{this.state.error}</div>
+            <></>
           )}
-        </div>
+        </form>
       </div>
     );
   }

@@ -1,27 +1,51 @@
 import React, { Component } from "react";
 import Login from "./Components/login";
+import httpService from "./Services/httpService";
 import { Route, Switch } from "react-router-dom";
 import RegisterForm from "./Components/registerForm";
 import NavBar from "./Components/SmallerComponents/NavBar";
 import Product from "./Components/product";
 import Sidebar from "./Components/SmallerComponents/Sidebar";
 import Cart from "./Components/Cart";
-import Off from "./Components/SmallerComponents/Off";
 import SearchTag from "./Components/SearchTag";
 import AddProduct from "./Components/addProduct";
+import apiUrl from "./config.json";
 class App extends Component {
   state = {
     products: [],
     userProducts: [],
+    userName: "",
+    isAdmin:false
   };
-  componentDidMount() {
-  };
+  componentDidMount = async () => {
+    try {
+      const user = await httpService.post(
+        apiUrl.apiUrl + "/api/userdetails",
+        localStorage.getItem("jwt")
+      );
 
+      this.setState({ userName: user.data.username });
+      this.setState({isAdmin:user.data.role==="ROLE_ADMIN"})
+    } catch (ex) {
+      this.setState({ userName: "Anonymous",isAdmin:false });
+    }
+  };
+componentDidUpdate(prevProps, prevState) {
+ // this.componentDidMount();
+}
   handleBuy = (e) => {
+    const eachProduct =
+      sessionStorage.getItem("userProducts") !== null
+        ? sessionStorage.getItem("userProducts").split(",")
+        : [];
+    let userProducts = [];
 
+    try {
+      userProducts = JSON.parse(eachProduct);
+    } catch (ex) {
+      console.log(ex);
+    }
 
-   
-    const userProducts = [...this.state.userProducts];
     const product = {
       id: e.id,
       Sn: userProducts.length + 1,
@@ -29,35 +53,40 @@ class App extends Component {
       count: 1,
       price: e.price,
     };
-    const pr = userProducts.find((pr) => pr.id == e.id);
-    pr ? this.handleIncrement(pr)
-      : userProducts.push(product);
+    const pr = userProducts.find((pr) => pr.id === e.id);
+    pr ? pr.count++ : userProducts.push(product);
+    console.log(JSON.stringify(userProducts));
     this.setState({ userProducts });
-   
+    sessionStorage.removeItem("userProducts");
+    sessionStorage.setItem("userProducts", JSON.stringify(userProducts));
   };
   handleIncrement = (product) => {
-   const userProducts = [...this.state.userProducts]
-   const pr = userProducts.find((pr) => pr.id == product.id);
+    const userProducts = [
+      ...JSON.parse(sessionStorage.getItem("userProducts")),
+    ];
+    const pr = userProducts.find((pr) => pr.id === product.id);
     pr.count++;
-  this.setState({userProducts});
-    
-
+    this.setState({ userProducts });
+    sessionStorage.removeItem("userProducts");
+    sessionStorage.setItem("userProducts", JSON.stringify(userProducts));
   };
   handleDecrement = (product) => {
-    const userProducts = [...this.state.userProducts]
-   const pr = userProducts.find((pr) => pr.id == product.id);
-  pr.count =  pr.count>0?pr.count-1:pr.count;
-  this.setState({userProducts});
+    const userProducts = [
+      ...JSON.parse(sessionStorage.getItem("userProducts")),
+    ];
+    const pr = userProducts.find((pr) => pr.id === product.id);
+    pr.count = pr.count > 0 ? pr.count - 1 : pr.count;
+    this.setState({ userProducts });
+    sessionStorage.removeItem("userProducts");
+    sessionStorage.setItem("userProducts", JSON.stringify(userProducts));
   };
 
   render() {
     return (
       <div>
-        <NavBar onProductSearch={this.handleProductsOnSearch} />
+        <NavBar onProductSearch={this.handleProductsOnSearch} isAdmin={this.state.isAdmin} />
         <div className="d-flex flex-row m-1">
-          <Off>
-            <Sidebar />
-          </Off>
+          <Sidebar userName={this.state.userName} />
 
           <Switch>
             <Route path="/register" exact component={RegisterForm} />

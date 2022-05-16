@@ -8,9 +8,12 @@ class NavBar extends Component {
    super(props);
    
  }
-
+ componentDidUpdate(prevProps, prevState) {
+   console.log(prevProps,this. props)
+ }
 
   render() {
+    console.log(this.props);
     return (
       <div className="mb-1">
       
@@ -22,8 +25,12 @@ class NavBar extends Component {
       <Nav className="me-auto">
         <SearchBar onProductSearch={this.props.onProductSearch}/>
         <NavLink className="nav-item nav-link" to="/">Items</NavLink>
-        <NavLink className="nav-item nav-link" to="/login">Login</NavLink>
-        <NavLink className="nav-item nav-link" to="/register">Register</NavLink>
+        {localStorage.getItem("jwt") === null?
+        <> <NavLink className="nav-item nav-link" to="/login">Login</NavLink>
+        <NavLink className="nav-item nav-link" to="/register">Register</NavLink></>
+        :<></>}
+
+        {this.props.isAdmin===true?<NavLink className="nav-item nav-link" to="/AddProduct"> Add Products</NavLink>:<></>}
        
       </Nav>
     </Navbar.Collapse>

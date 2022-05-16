@@ -2,10 +2,10 @@ import React, { Component, useState } from "react";
 
 import { Offcanvas, Button } from "react-bootstrap";
 function Off(props) {
-  const [show, setShow] = useState(false);
+ // const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleClose = () => props.setShow(false);
+  const handleShow = () => props.setShow(true);
 
   return (
     <div>
@@ -13,7 +13,7 @@ function Off(props) {
         <strong>&#9776;Categories</strong>
       </Button>
 
-      <Offcanvas style={{ width: "250px" }} show={show} onHide={handleClose}>
+      <Offcanvas style={{ width: "250px" }} show={props.show} onHide={handleClose}>
         <Offcanvas.Header closeButton>
           <Offcanvas.Title>Hello User</Offcanvas.Title>
         </Offcanvas.Header>
