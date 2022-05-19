@@ -15,7 +15,7 @@ class App extends Component {
     products: [],
     userProducts: [],
     userName: "",
-    isAdmin:false
+    isAdmin: false,
   };
   componentDidMount = async () => {
     try {
@@ -23,16 +23,16 @@ class App extends Component {
         apiUrl.apiUrl + "/api/userdetails",
         localStorage.getItem("jwt")
       );
-
+     
       this.setState({ userName: user.data.username });
-      this.setState({isAdmin:user.data.role==="ROLE_ADMIN"})
+      this.setState({ isAdmin: user.data.roles[0] == "ROLE_ADMIN" });
     } catch (ex) {
-      this.setState({ userName: "Anonymous",isAdmin:false });
+      this.setState({ userName: "Anonymous", isAdmin: false });
     }
   };
-componentDidUpdate(prevProps, prevState) {
- // this.componentDidMount();
-}
+  componentDidUpdate(prevProps, prevState) {
+    this.componentDidMount();
+  }
   handleBuy = (e) => {
     const eachProduct =
       sessionStorage.getItem("userProducts") !== null
@@ -84,7 +84,10 @@ componentDidUpdate(prevProps, prevState) {
   render() {
     return (
       <div>
-        <NavBar onProductSearch={this.handleProductsOnSearch} isAdmin={this.state.isAdmin} />
+        <NavBar
+          onProductSearch={this.handleProductsOnSearch}
+          isAdmin={this.state.isAdmin}
+        />
         <div className="d-flex flex-row m-1">
           <Sidebar userName={this.state.userName} />
 

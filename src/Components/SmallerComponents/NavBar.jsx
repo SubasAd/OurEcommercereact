@@ -3,17 +3,9 @@ import { NavLink } from "react-router-dom";
 import {Navbar,Container,Nav} from 'react-bootstrap'
 import SearchBar from "./Searchbox";
 class NavBar extends Component {
- constructor(props)
- {
-   super(props);
-   
- }
- componentDidUpdate(prevProps, prevState) {
-   console.log(prevProps,this. props)
- }
-
+ 
   render() {
-    console.log(this.props);
+   
     return (
       <div className="mb-1">
       

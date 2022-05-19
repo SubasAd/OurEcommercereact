@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import Input from "./SmallerComponents/input";
 import { login } from "../Services/login";
 import Toastmsg from "./SmallerComponents/Toastmsg";
+import httpService from "../Services/httpService";
+import apiUrl from '../config.json'
 
 class Login extends Component {
   Toast = null;
@@ -28,6 +30,15 @@ class Login extends Component {
     try {
       const { data } = await login(account);
       localStorage.setItem("jwt", data.jwt);
+      const {data:products} =  await httpService.post(apiUrl.apiUrl+"/api/buy",[],
+      {
+        headers: {
+          Authorization: `Bearer ${data.jwt}`
+        },
+      }
+     
+    );
+    sessionStorage.setItem("userProducts",JSON.stringify(products)); 
       this.setState({ error: "" });
       window.location = "/";
 
@@ -37,6 +48,7 @@ class Login extends Component {
         this.setState({ error: response.data });
 
         localStorage.clear();
+        sessionStorage.clear();
       }
       this.setState({ isLogin: false });
     }

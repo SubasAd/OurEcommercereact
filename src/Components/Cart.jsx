@@ -1,10 +1,30 @@
 import React, { Component } from 'react';
 import Table from 'react-bootstrap/Table'
 import TableRow from './SmallerComponents/tableRow';
+import httpService from '../Services/httpService'
+import apiUrl from '../config.json'
 import ESewa from './SmallerComponents/eSewa';
 const Cart = (props) => {
   let totalPrice = 0;
+  const handleBuy= async ()=>{
+    const endPoint= apiUrl.apiUrl+"/api/buy"
+    const jwt = localStorage.getItem("jwt");
+    try{
+    const {data} =  await httpService.post(endPoint, JSON.parse(sessionStorage.getItem("userProducts")),
+      {
+        headers: {
+          Authorization: `Bearer ${jwt}`
+        },
+      }
+     
+    ); 
+  
+    }catch(ex)
+    {
+      console.log(ex.data);
+    }
  
+  }
 
 
     return ( 
@@ -62,7 +82,7 @@ const Cart = (props) => {
   </tbody>
 
 </Table>
-
+<button onClick={handleBuy}> Buy </button>
 
 
 

@@ -1,12 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import NavLink from "react-router-dom/NavLink";
 import categories from "../../Categories.json";
 import ListCategory from "./Listcategory";
 import { signOut } from "../../Services/signOut";
 import Toastmsg from "./Toastmsg";
-import httpService from "../../Services/httpService";
 import Off from "./Off";
-import apiUrl from "../../config.json";
 
 function Sidebar({ userName }) {
   let [show, setShow] = useState(false);
@@ -18,12 +16,14 @@ function Sidebar({ userName }) {
   return (
     <>
       <Toastmsg
+
+     style={{zIndex:'100000000000000'}}
         bg="danger"
         show={show}
         setShow={setShow}
         msg="Logged out Successfully"
       />
-      <Off show={showOff} setShow={setShowOff}>
+     
         <div className="wrapper">
           <div
             className="d-flex flex-column flex-shrink-0 p-1 bg-light"
@@ -99,7 +99,7 @@ function Sidebar({ userName }) {
             </div>
           </div>
         </div>
-      </Off>
+      
     </>
   );
 }
